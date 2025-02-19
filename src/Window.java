@@ -1,10 +1,5 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.*;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -102,11 +97,16 @@ public class Window extends JFrame{
 
     }
 
+    private ArrayList<String> readData() {
+        ArrayList<String> buttonName = new ArrayList<>();
+        return buttonName;
+    }
+
     private void makeButtonRound(JButton button) {
         button.setFocusPainted(false);
         button.setContentAreaFilled(false);
         button.setBorder(new RoundedBorder(30)); //Set rounded corners with 30 px radius
-        button.setBackground(Color.CYAN); //Optional set background color
+        
     }
 
     class RoundedBorder implements Border {
@@ -130,7 +130,7 @@ public class Window extends JFrame{
 
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            g.setColor(Color.BLACK); //Background Color
+             //Background Color
             g.fillRoundRect(x, y, width -1, height - 1, radius, radius);
         }
         
