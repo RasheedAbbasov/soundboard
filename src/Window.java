@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 import javax.swing.*;
 
@@ -41,6 +42,9 @@ public class Window extends JFrame {
 
         //Loading the saved sounds
         loadSavedSounds();
+
+        importButton.addActionListener(e -> addNewSound());
+        deleteButton.addActionListener(e -> removeSelectedSound());
         
 
         //Set the contentPane to the frame
@@ -110,14 +114,54 @@ public class Window extends JFrame {
      */
     private void addSoundButton(String soundName, String filePath) {
         JButton soundButton = new JButton(soundName);
+        soundButton.setPreferredSize(new Dimension(150, 50));
         panelCenter.add(soundButton);
         panelCenter.revalidate();
         panelCenter.repaint();
     }
 
+
+    /**
+     * Adds a new sound
+     */
     private void addNewSound() {
         JFileChooser fileChooser = new JFileChooser();
         int returnValue = fileChooser.showOpenDialog(this);
+
+        if(returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            String soundName = selectedFile.getName();
+            String filePath = selectedFile.getAbsolutePath();
+
+
+            //Saves it to the properties 
+            soundManager.addSound(soundName, filePath);
+
+
+            //Adds a button to the ui
+            addSoundButton(soundName, filePath); 
+        }
+    }
+
+
+
+
+    private  void removeSelectedSound() {
+        Component[] components = panelCenter.getComponents();
+
+        if(components.length > 0) {
+            JButton buttonToRemove  = (JButton) components[components.length - 1];
+            panelCenter.remove(buttonToRemove);
+            panelCenter.revalidate();
+            panelCenter.repaint();
+
+
+
+            //Removes from properties 
+            soundManager.removeSound(buttonToRemove.getText());
+        }
+
+    }
         
     }
 
@@ -162,4 +206,4 @@ public class Window extends JFrame {
     // this.soundName = name;
     // }
 
-}
+
