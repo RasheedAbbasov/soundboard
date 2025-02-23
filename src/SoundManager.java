@@ -36,14 +36,14 @@ public class SoundManager {
 
 
 
-    private void addSound(String soundName, String filePath) {
+    public void addSound(String soundName, String filePath) {
         properties.setProperty(soundName, filePath);
         saveProperties();
         
     }
 
 
-    private void removeSound(String soundName) {
+    public void removeSound(String soundName) {
         properties.remove(soundName);
         saveProperties();
     }
