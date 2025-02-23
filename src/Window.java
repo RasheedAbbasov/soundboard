@@ -14,9 +14,11 @@ public class Window extends JFrame{
     private JLabel label = new JLabel("Test");
     private JButton soundButton1 = new JButton("sound1");
     private JButton soundButton2 = new JButton("sound2");
-    private JButton importButton = new JButton("Import");
-    private JButton deleteButton = new JButton("Delete");
-    private JButton editButton = new JButton("Edit");
+    private final JButton importButton = new JButton("Import");
+    private final JButton deleteButton = new JButton("Delete");
+    private final JButton editButton = new JButton("Edit");
+    private SoundManager soundManager;
+
 
 
 
@@ -45,7 +47,6 @@ public class Window extends JFrame{
 
         //Makes the frame visible (Always set at the end)
         this.setVisible(true);
-
     }
 
 
@@ -60,12 +61,17 @@ public class Window extends JFrame{
         JPanel panelnorth = new JPanel();
 
 
+
+
+
         //Sets the size of the buttons
-        soundButton1.setPreferredSize(new Dimension(200,50));
-        soundButton2.setPreferredSize(new Dimension(200, 50));
+        soundButton1.setPreferredSize(new Dimension(150,50));
+        soundButton2.setPreferredSize(new Dimension(150, 50));
         importButton.setPreferredSize(new Dimension(100,50));
         deleteButton.setPreferredSize(new Dimension(100,50));
         editButton.setPreferredSize(new Dimension(100, 50));
+
+
 
 
         // makeButtonRound(soundButton1);
@@ -86,10 +92,13 @@ public class Window extends JFrame{
 
         //Adds elements to the sub panels
         panelcenter.add(soundButton1);
+        soundButton1 = new JButton("hey");
+        panelcenter.add(soundButton1);
         panelcenter.add(soundButton2);
         panelnorth.add(importButton);
         panelnorth.add(deleteButton);
         panelnorth.add(editButton);
+
 
 ;
 
