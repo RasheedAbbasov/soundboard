@@ -106,10 +106,8 @@ public class Window extends JFrame {
     }
 
     /**
-     * Takes in the name and the location of the sound and stores it in a hashmap
+     * Takes in the name and location of the file and sets it to the button
      * and adds it to the center panel
-     * Also checks if the file is the WAV as that is the only file type supported if
-     * it is not it will not add it
      * 
      * 
      * @param soundName the name of the sounds that is going to be added
