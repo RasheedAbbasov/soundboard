@@ -1,11 +1,15 @@
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import javax.sound.sampled.*;
 import javax.swing.*;
 
 public class Window extends JFrame {
 
-    private Scanner scnr;
     private static String filename = "button.txt";
     private String soundName;
     private JPanel contentPane = new JPanel();
@@ -21,36 +25,35 @@ public class Window extends JFrame {
      */
     public Window() {
 
-
-        //Initializing sound manager
+        // Initializing sound manager
         soundManager = new SoundManager();
 
-        //Sets the properties 
+        // Sets the properties
         this.setTitle("Rasho's SoundBoard");
-        this.setSize(500,600);
+        this.setSize(500, 600);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setIconImage(Icon.getImage());
+        this.setResizable(false);
 
-        //Sets the frame to full screen
+        // Sets the frame to full screen
         // this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        //Hides the title when set to full screen
+        // Hides the title when set to full screen
         // this.setUndecorated(true);
 
-        //Set the custom layout
+        // Set the custom layout
         customLayout();
 
-        //Loading the saved sounds
+        // Loading the saved sounds
         loadSavedSounds();
 
         importButton.addActionListener(e -> addNewSound());
         deleteButton.addActionListener(e -> removeSelectedSound());
-        
 
-        //Set the contentPane to the frame
+        // Set the contentPane to the frame
         this.setContentPane(contentPane);
 
-        //Makes the frame visible (Always set at the end)
+        // Makes the frame visible (Always set at the end)
         this.setVisible(true);
     }
 
@@ -87,8 +90,6 @@ public class Window extends JFrame {
         panelnorth.add(deleteButton);
         panelnorth.add(editButton);
 
-        ;
-
         // adds the subpanels to the main panel
         contentPane.add(panelnorth, BorderLayout.NORTH);
         contentPane.add(panelCenter, FlowLayout.CENTER);
@@ -107,103 +108,112 @@ public class Window extends JFrame {
     /**
      * Takes in the name and the location of the sound and stores it in a hashmap
      * and adds it to the center panel
+     * Also checks if the file is the WAV as that is the only file type supported if
+     * it is not it will not add it
      * 
      * 
      * @param soundName the name of the sounds that is going to be added
      * @param filePath  the location of the sounds
      */
     private void addSoundButton(String soundName, String filePath) {
+
         JButton soundButton = new JButton(soundName);
         soundButton.setPreferredSize(new Dimension(150, 50));
-        panelCenter.add(soundButton);
-        panelCenter.revalidate();
-        panelCenter.repaint();
+        String fileType = getFileType(filePath);
+
+        if (fileType.equalsIgnoreCase("audio/wav")) {
+            soundButton.addActionListener(e -> playSound(filePath));
+            panelCenter.add(soundButton);
+            panelCenter.revalidate();
+            panelCenter.repaint();
+        }
     }
 
+    /**
+     * Implemets a method to play the audio file
+     * Added in a actionListener
+     * 
+     * @param filePath Location of the file
+     */
+    private void playSound(String filePath) {
+
+        File soundFile = new File(filePath);
+
+        try {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
+
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+
+            clip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
     /**
-     * Adds a new sound
+     * Gets the type of file
+     * 
+     * @param filePath the path of the file
+     * @return retuns a string on the type of file
+     */
+    private String getFileType(String filePath) {
+        Path fileLocation = Paths.get(filePath);
+        String fileType = "";
+
+        try {
+            fileType = Files.probeContentType(fileLocation);
+            System.out.println("File type: " + fileType); // e.g., "text/plain", "image/jpeg"
+            return fileType;
+        } catch (IOException e) {
+            System.err.println("Error probing file type: " + e.getMessage());
+        }
+        return "";
+
+    }
+
+    /**
+     * Opens file explored and lets the user choose a song and adds it
+     * Also checks if the file type is a .wav file since that is the only one
+     * supported
      */
     private void addNewSound() {
         JFileChooser fileChooser = new JFileChooser();
         int returnValue = fileChooser.showOpenDialog(this);
+        String fileType = "";
 
-        if(returnValue == JFileChooser.APPROVE_OPTION) {
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            String soundName = selectedFile.getName();
-            String filePath = selectedFile.getAbsolutePath();
+            if (getFileType(selectedFile.toString()).equalsIgnoreCase("audio/wav")) {
+                String soundName = selectedFile.getName();
+                String filePath = selectedFile.getAbsolutePath();
 
+                // Saves it to the properties
+                soundManager.addSound(soundName, filePath);
 
-            //Saves it to the properties 
-            soundManager.addSound(soundName, filePath);
-
-
-            //Adds a button to the ui
-            addSoundButton(soundName, filePath); 
+                // Adds a button to the ui
+                addSoundButton(soundName, filePath);
+            }
         }
     }
 
-
-
-
-    private  void removeSelectedSound() {
+    /**
+     * Implements the delete action
+     */
+    private void removeSelectedSound() {
         Component[] components = panelCenter.getComponents();
 
-        if(components.length > 0) {
-            JButton buttonToRemove  = (JButton) components[components.length - 1];
+        if (components.length > 0) {
+            JButton buttonToRemove = (JButton) components[components.length - 1];
             panelCenter.remove(buttonToRemove);
             panelCenter.revalidate();
             panelCenter.repaint();
 
-
-
-            //Removes from properties 
+            // Removes from properties
             soundManager.removeSound(buttonToRemove.getText());
         }
 
     }
-        
-    }
 
-    // private void makeButtonRound(JButton button) {
-    // button.setFocusPainted(false);
-    // button.setContentAreaFilled(false);
-    // button.setBorder(new RoundedBorder(30)); //Set rounded corners with 30 px
-    // radius
-
-    // }
-
-    // class RoundedBorder implements Border {
-
-    // private int radius;
-
-    // public RoundedBorder (int radius) {
-    // this.radius = radius;
-    // }
-
-    // @Override
-    // public Insets getBorderInsets(Component c) {
-    // return new Insets(this.radius + 5, this.radius + 5, this.radius + 5,
-    // this.radius + 5);
-    // }
-
-    // @Override
-    // public boolean isBorderOpaque() {
-    // return true;
-    // }
-
-    // @Override
-    // public void paintBorder(Component c, Graphics g, int x, int y, int width, int
-    // height) {
-    // //Background Color
-    // g.fillRoundRect(x, y, width -1, height - 1, radius, radius);
-    // }
-
-    // }
-
-    // //Sets the user set a custom name for a button
-    // public void setSoundName(String name) {
-    // this.soundName = name;
-    // }
-
-
+}
