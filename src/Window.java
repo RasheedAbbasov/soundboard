@@ -48,19 +48,15 @@ public class Window extends JFrame {
         loadSavedSounds();
 
         importButton.addActionListener(e -> addNewSound());
-        deleteButton.addActionListener(e ->  {
+        deleteButton.addActionListener(e -> {
+
+            // Prints out the value of deleteMode to the console
             deleteMode = true;
             System.out.println(deleteMode);
-            if(deleteMode) {
+            if (deleteMode) {
                 removeSelectedSound();
             }
             System.out.println(deleteMode);
-
-
-            
-
-
-            
         });
 
         // Set the contentPane to the frame
@@ -134,14 +130,11 @@ public class Window extends JFrame {
 
         if (fileType.equalsIgnoreCase("audio/wav")) {
 
-                soundButton.addActionListener(e -> {    
-                    if(!deleteMode) {
-                        playSound(filePath);
-                    }
-                });
-                panelCenter.add(soundButton);
-                panelCenter.revalidate();
-                panelCenter.repaint();
+            soundButton.addActionListener(e -> playSound(filePath));
+
+            panelCenter.add(soundButton);
+            panelCenter.revalidate();
+            panelCenter.repaint();
         }
     }
 
@@ -154,17 +147,16 @@ public class Window extends JFrame {
     private void playSound(String filePath) {
 
         File soundFile = new File(filePath);
-        if(!deleteMode) {
-            try {
-                AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
-    
-                Clip clip = AudioSystem.getClip();
-                clip.open(audioStream);
-    
-                clip.start();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
+        try {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
+
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+
+            clip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
@@ -215,37 +207,32 @@ public class Window extends JFrame {
         }
     }
 
-
-    
     /**
      * Implements the delete action
      */
     private void removeSelectedSound() {
-    if (!deleteMode) return;
+        if (!deleteMode)
+            return;
 
-    for (Component component : panelCenter.getComponents()) {
-        if (component instanceof JButton soundButton) {
-            // Remove existing ActionListeners
-            for (ActionListener al : soundButton.getActionListeners()) {
-                soundButton.removeActionListener(al);
+        for (Component component : panelCenter.getComponents()) {
+            if (component instanceof JButton soundButton) {
+                // Remove existing ActionListeners
+                for (ActionListener al : soundButton.getActionListeners()) {
+                    soundButton.removeActionListener(al);
+                }
+
+                // Set new ActionListener to delete the button
+                soundButton.addActionListener(e -> {
+                    panelCenter.remove(soundButton);
+                    panelCenter.revalidate();
+                    panelCenter.repaint();
+
+                    soundManager.removeSound(soundButton.getText());
+                    deleteButton.setText("Delete");
+                    deleteMode = false;
+                });
             }
-
-            // Set new ActionListener to delete the button
-            soundButton.addActionListener(e -> {
-                panelCenter.remove(soundButton);
-                panelCenter.revalidate();
-                panelCenter.repaint();
-
-                soundManager.removeSound(soundButton.getText());
-                deleteButton.setText("Delete");
-                deleteMode = false;
-            });
         }
-    }
-        
-
-
-
 
     }
 
