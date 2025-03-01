@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,14 +11,13 @@ import javax.swing.*;
 
 public class Window extends JFrame {
 
-    private static String filename = "button.txt";
-    private String soundName;
     private JPanel contentPane = new JPanel();
     private JPanel panelCenter = new JPanel();
     private ImageIcon Icon = new ImageIcon("soundboard.png");
     private final JButton importButton = new JButton("Import");
     private final JButton deleteButton = new JButton("Delete");
     private final JButton editButton = new JButton("Edit");
+    private boolean deleteMode;
     private SoundManager soundManager;
 
     /**
@@ -48,7 +48,20 @@ public class Window extends JFrame {
         loadSavedSounds();
 
         importButton.addActionListener(e -> addNewSound());
-        deleteButton.addActionListener(e -> removeSelectedSound());
+        deleteButton.addActionListener(e ->  {
+            deleteMode = true;
+            System.out.println(deleteMode);
+            if(deleteMode) {
+                removeSelectedSound();
+            }
+            System.out.println(deleteMode);
+
+
+            
+
+
+            
+        });
 
         // Set the contentPane to the frame
         this.setContentPane(contentPane);
@@ -120,10 +133,15 @@ public class Window extends JFrame {
         String fileType = getFileType(filePath);
 
         if (fileType.equalsIgnoreCase("audio/wav")) {
-            soundButton.addActionListener(e -> playSound(filePath));
-            panelCenter.add(soundButton);
-            panelCenter.revalidate();
-            panelCenter.repaint();
+
+                soundButton.addActionListener(e -> {    
+                    if(!deleteMode) {
+                        playSound(filePath);
+                    }
+                });
+                panelCenter.add(soundButton);
+                panelCenter.revalidate();
+                panelCenter.repaint();
         }
     }
 
@@ -136,16 +154,17 @@ public class Window extends JFrame {
     private void playSound(String filePath) {
 
         File soundFile = new File(filePath);
-
-        try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
-
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
-
-            clip.start();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(!deleteMode) {
+            try {
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
+    
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioStream);
+    
+                clip.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -196,21 +215,37 @@ public class Window extends JFrame {
         }
     }
 
+
+    
     /**
      * Implements the delete action
      */
     private void removeSelectedSound() {
-        Component[] components = panelCenter.getComponents();
+    if (!deleteMode) return;
 
-        if (components.length > 0) {
-            JButton buttonToRemove = (JButton) components[components.length - 1];
-            panelCenter.remove(buttonToRemove);
-            panelCenter.revalidate();
-            panelCenter.repaint();
+    for (Component component : panelCenter.getComponents()) {
+        if (component instanceof JButton soundButton) {
+            // Remove existing ActionListeners
+            for (ActionListener al : soundButton.getActionListeners()) {
+                soundButton.removeActionListener(al);
+            }
 
-            // Removes from properties
-            soundManager.removeSound(buttonToRemove.getText());
+            // Set new ActionListener to delete the button
+            soundButton.addActionListener(e -> {
+                panelCenter.remove(soundButton);
+                panelCenter.revalidate();
+                panelCenter.repaint();
+
+                soundManager.removeSound(soundButton.getText());
+                deleteButton.setText("Delete");
+                deleteMode = false;
+            });
         }
+    }
+        
+
+
+
 
     }
 
