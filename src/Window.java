@@ -16,7 +16,6 @@ public class Window extends JFrame {
     private ImageIcon Icon = new ImageIcon("soundboard.png");
     private final JButton importButton = new JButton("Import");
     private final JButton deleteButton = new JButton("Delete");
-    private final JButton editButton = new JButton("Edit");
     private boolean deleteMode;
     private SoundManager soundManager;
 
@@ -34,12 +33,6 @@ public class Window extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setIconImage(Icon.getImage());
         this.setResizable(false);
-
-        // Sets the frame to full screen
-        // this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-
-        // Hides the title when set to full screen
-        // this.setUndecorated(true);
 
         // Set the custom layout
         customLayout();
@@ -78,17 +71,12 @@ public class Window extends JFrame {
         // Sets the size of the buttons
         importButton.setPreferredSize(new Dimension(100, 50));
         deleteButton.setPreferredSize(new Dimension(100, 50));
-        editButton.setPreferredSize(new Dimension(100, 50));
-
-        // makeButtonRound(soundButton1);
-        // makeButtonRound(Button2);
-        // makeButtonRound(soundButton2);
 
         // Sets the size and the color of the panels
         panelCenter.setPreferredSize(new Dimension(500, 500));
         panelCenter.setBackground(Color.LIGHT_GRAY);
         panelnorth.setPreferredSize(new Dimension(500, 100));
-        panelnorth.setBackground(Color.BLUE);
+        panelnorth.setBackground(Color.GRAY);
 
         // Sets a new grid layout for sub panels
         panelCenter.setLayout(new FlowLayout());
@@ -97,7 +85,6 @@ public class Window extends JFrame {
         // Adds elements to the sub panels
         panelnorth.add(importButton);
         panelnorth.add(deleteButton);
-        panelnorth.add(editButton);
 
         // adds the subpanels to the main panel
         contentPane.add(panelnorth, BorderLayout.NORTH);
