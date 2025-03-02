@@ -9,9 +9,9 @@ A Java Program that lets users store their sounds in a lightweight software
 
 
 ## Visuals 
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
+![alt text](Graphic/image.png)
+![alt text](Graphic/image-1.png)
+![alt text](Graphic/image-2.png)
 
 
 ## Installation

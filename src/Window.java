@@ -13,7 +13,7 @@ public class Window extends JFrame {
 
     private JPanel contentPane = new JPanel();
     private JPanel panelCenter = new JPanel();
-    private ImageIcon Icon = new ImageIcon("soundboard.png");
+    private ImageIcon Icon = new ImageIcon("Graphic/soundboard.png");
     private final JButton importButton = new JButton("Import");
     private final JButton deleteButton = new JButton("Delete");
     private boolean deleteMode;
